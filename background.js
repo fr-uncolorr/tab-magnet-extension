@@ -1,8 +1,20 @@
+const tabHosts = new Map();
+
 // listener for when new tab created
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (!changeInfo.url) return;
 
-  //   console.log("opened tab: " + getHostname(tab));
+  const host = getHostname(tab);
+  const previousHost = tabHosts.get(tabId);
+
+  // if same host, dont move
+  if (previousHost === host) {
+    return;
+  }
+
+  // new host/first time seeing host
+  // update stored host
+  tabHosts.set(tabId, host);
 
   const tabs = await fetchTabs(tab.windowId);
 
@@ -55,8 +67,6 @@ function moveToTarget(tab, targetIndex) {
   chrome.tabs.move(tab.id, {
     index: targetIndex + 1,
   });
-
-  console.log("moved tab");
 }
 
 // listener for when extension icon clicked
@@ -65,4 +75,10 @@ chrome.action.onClicked.addListener((tab) => {
 
   // call future function that will
   // order all opened tabs in current window
+});
+
+// listener for when tab is closed, to clean maps
+chrome.tabs.onRemoved.addListener((tabId) => {
+  tabHosts.delete(tabId);
+  // console.log('Snapshot:', [...tabHosts]);
 });
