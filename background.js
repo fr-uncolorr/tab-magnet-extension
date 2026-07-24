@@ -70,12 +70,42 @@ function moveToTarget(tab, targetIndex) {
 }
 
 // listener for when extension icon clicked
-chrome.action.onClicked.addListener((tab) => {
-  console.log("icon clicked at tab:", tab.id);
-
-  // call future function that will
-  // order all opened tabs in current window
+chrome.action.onClicked.addListener(async (tab) => {
+  await reorderWindow(tab.windowId);
 });
+
+async function reorderWindow(windowId) {
+  const tabs = await chrome.tabs.query({ windowId });
+
+  const groups = new Map();
+
+  for (const tab of tabs) {
+    const host = getHostname(tab);
+
+    // if group dont exist yet, create
+    if (!groups.has(host)) {
+      groups.set(host, []);
+    }
+
+    // add to gruop
+    groups.get(host).push(tab);
+  }
+
+  // order: most tabs on left, less tabs on right
+  const sortedGroups = new Map(
+    [...groups.entries()].sort((a, b) => b[1].length - a[1].length)
+  );
+
+  // flatten in desired order
+  const orderedTabs = [...sortedGroups.values()].flat();
+
+  // move each tab
+  for (let i = 0; i < orderedTabs.length; i++) {
+    await chrome.tabs.move(orderedTabs[i].id, {
+      index: i,
+    });
+  }
+}
 
 // listener for when tab is closed, to clean maps
 chrome.tabs.onRemoved.addListener((tabId) => {
