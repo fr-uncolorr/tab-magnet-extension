@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Tab Magnet</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Inter, "Segoe UI", Arial, sans-serif;
+      }
+
+      body {
+        width: 320px;
+        padding: 12px;
+        background: rgb(246, 246, 246);
+      }
+
+      :nth-child(1 of .card) {
+        margin-bottom: 16px;
+      }
+
+      /* ---------- Header ---------- */
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
+      .logo {
+        width: 32px;
+        height: 32px;
+        user-select: none;
+      }
+
+      .actions {
+        display: flex;
+        gap: 6px;
+      }
+
+      .icon-btn {
+        width: 32px;
+        height: 32px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        border: none;
+        border-radius: 8px;
+        background: transparent;
+
+        color: #5f6368;
+        cursor: pointer;
+
+        transition:
+          background 0.15s ease,
+          color 0.15s ease;
+      }
+
+      .icon-btn:hover {
+        background: #ececec;
+      }
+
+      .icon-btn:active {
+        background: #e2e2e2;
+      }
+
+      .icon-btn svg {
+        width: 18px;
+        height: 18px;
+
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      /* ---------- Card ---------- */
+
+      .card {
+        background: #fff;
+        border-radius: 14px;
+        padding: 14px;
+
+        box-shadow:
+          0 2px 6px rgba(0, 0, 0, 0.03),
+          0 12px 28px rgba(0, 0, 0, 0.05);
+      }
+
+      .section-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #181818;
+        letter-spacing: 0.1px;
+        margin-bottom: 10px;
+      }
+
+      .setting {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 13px 0;
+        border-bottom: 1px solid #ececec;
+      }
+
+      .setting:last-child {
+        border-bottom: none;
+      }
+
+      .setting-name {
+        font-size: 14px;
+        color: #222;
+      }
+
+      /* ---------- Switch ---------- */
+
+      .switch {
+        position: relative;
+        width: 44px;
+        height: 24px;
+      }
+
+      .switch input {
+        display: none;
+      }
+
+      .slider {
+        position: absolute;
+        inset: 0;
+        background: #d2d2d2;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      .slider::before {
+        content: "";
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        left: 3px;
+        top: 3px;
+        background: #fff;
+        border-radius: 50%;
+        transition: 0.2s;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      }
+
+      input:checked + .slider {
+        background: rgb(206, 38, 44);
+      }
+
+      input:checked + .slider::before {
+        transform: translateX(20px);
+      }
+
+      /* ---------- Select ---------- */
+
+      .select {
+        min-width: 120px;
+        padding: 6px 10px;
+
+        border: 1px solid #ddd;
+        border-radius: 8px;
+
+        background: #fff;
+        color: #222;
+        font-size: 13px;
+
+        cursor: pointer;
+        outline: none;
+
+        transition: border-color 0.15s ease;
+      }
+
+      .select:hover {
+        border-color: #c7c7c7;
+      }
+
+      .select:focus {
+        border-color: rgb(206, 38, 44);
+      }
+
+      /* ---------- Action Button ---------- */
+
+      .action-btn {
+        padding: 0 14px;
+
+        border: none;
+        border-radius: 8px;
+
+        background: rgb(206, 38, 44);
+        color: white;
+
+        font-size: 13px;
+        font-weight: 500;
+
+        cursor: pointer;
+
+        transition:
+          background 0.15s ease,
+          transform 0.1s ease;
+      }
+
+      .action-btn:hover {
+        background: rgb(185, 30, 36);
+      }
+
+      .action-btn:active {
+        transform: scale(0.97);
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="header">
+      <img class="logo" src="/icons/48.png" alt="Tab Magnet" />
+
+      <div class="actions">
+        <!-- Reset -->
+
+        <button class="icon-btn" aria-label="Reset tabs">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-rotate-ccw-icon lucide-rotate-ccw"
+          >
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+            <path d="M3 3v5h5" />
+          </svg>
+        </button>
+
+        <!-- Language -->
+
+        <button class="icon-btn" aria-label="Language">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-globe-icon lucide-globe"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+            <path d="M2 12h20" />
+          </svg>
+        </button>
+
+        <button id="reorder-window" class="action-btn">Sort all tabs</button>
+      </div>
+    </header>
+
+    <div class="card">
+      <div class="section-title">Automation Settings</div>
+
+      <!-- Toggle -->
+      <div class="setting">
+        <span class="setting-name">Auto organize tabs</span>
+
+        <label class="switch">
+          <input id="autoOrganize" type="checkbox" checked />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <!-- Dropdown -->
+      <div class="setting">
+        <span class="setting-name">Organize new tabs</span>
+
+        <select id="organizeNewTabs" class="select" title="Sort mode">
+          <option value="end">At end</option>
+          <option value="begin">At beginning</option>
+        </select>
+      </div>
+    </div>
+
+<!-- 
+    <div class="card">
+      <div class="section-title">Sort All Settings</div>
+
+
+      <div class="setting">
+        <span class="setting-name">Sort by</span>
+
+        <select class="select" title="Sort mode">
+          <option>Tab Count</option>
+          <option>Creation order</option>
+          <option>Alphabetically</option>
+        </select>
+      </div>
+
+      <div class="setting">
+        <span class="setting-name">Sort order</span>
+
+        <select class="select" title="Sort mode">
+          <option>Largest first</option>
+          <option>Smallest first</option>
+        </select>
+      </div>
+    </div> 
+-->
+  </body>
+  <script src="popup.js"></script>
+</html>

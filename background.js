@@ -18,11 +18,13 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
   const tabs = await fetchTabs(tab.windowId);
 
-  const targetIndex = findTargetIndex(tabs, tab);
+  const targetIndex = await findTargetIndex(tabs, tab);
 
   console.log("index of last match:", targetIndex);
 
-  if (targetIndex) {
+  const { autoOrganize = true } = await chrome.storage.sync.get("autoOrganize");
+
+  if (targetIndex && autoOrganize) {
     moveToTarget(tab, targetIndex);
   }
 });
@@ -41,7 +43,7 @@ function fetchTabs(windowId) {
 }
 
 // finds last matching tab other than the one that triggered this event
-function findTargetIndex(tabs, tab) {
+async function findTargetIndex(tabs, tab) {
   const currentHost = getHostname(tab);
 
   const sameHost = tabs.filter(
@@ -49,15 +51,24 @@ function findTargetIndex(tabs, tab) {
       candidate.id !== tab.id && getHostname(candidate) === currentHost,
   );
 
+  const { organizeMode = "end" } =
+    await chrome.storage.sync.get("organizeMode");
+
   if (sameHost.length > 0) {
-    // console.log("tabs with the same host", sameHost);
-
     // using reduce to return full tab object
-    const lastMatch = sameHost.reduce((max, tab) =>
-      tab.index > max.index ? tab : max,
-    );
+    // tab = item in the function below
+    const targetTab = sameHost.reduce((acc, item) => {
+      const isTarget =
+        organizeMode === "begin"
+          ? item.index < acc.index
+          : item.index > acc.index;
 
-    return lastMatch.index;
+      return isTarget ? item : acc;
+    });
+
+    return organizeMode === "begin" 
+    ? targetTab.index - 1
+    : targetTab.index;
   } else {
     return;
   }
@@ -68,11 +79,6 @@ function moveToTarget(tab, targetIndex) {
     index: targetIndex + 1,
   });
 }
-
-// listener for when extension icon clicked
-chrome.action.onClicked.addListener(async (tab) => {
-  await reorderWindow(tab.windowId);
-});
 
 async function reorderWindow(windowId) {
   const tabs = await chrome.tabs.query({ windowId });
@@ -93,7 +99,7 @@ async function reorderWindow(windowId) {
 
   // order: most tabs on left, less tabs on right
   const sortedGroups = new Map(
-    [...groups.entries()].sort((a, b) => b[1].length - a[1].length)
+    [...groups.entries()].sort((a, b) => b[1].length - a[1].length),
   );
 
   // flatten in desired order
@@ -111,4 +117,13 @@ async function reorderWindow(windowId) {
 chrome.tabs.onRemoved.addListener((tabId) => {
   tabHosts.delete(tabId);
   // console.log('Snapshot:', [...tabHosts]);
+});
+
+// listener for actions in the popup
+chrome.runtime.onMessage.addListener((message, sender) => {
+  if (message.action === "reorder-window") {
+    chrome.windows.getCurrent((window) => {
+      reorderWindow(window.windowId);
+    });
+  }
 });
