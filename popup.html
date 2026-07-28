@@ -266,16 +266,16 @@
           </svg>
         </button>
 
-        <button id="reorder-window" class="action-btn">Sort all tabs</button>
+        <button id="reorder-window" class="action-btn" data-i18n="sortAllButton"></button>
       </div>
     </header>
 
     <div class="card">
-      <div class="section-title">Automation Settings</div>
+      <div class="section-title" data-i18n="autoSettingsTitle"></div>
 
       <!-- Toggle -->
       <div class="setting">
-        <span class="setting-name">Auto organize tabs</span>
+        <span class="setting-name" data-i18n="autoOrganizeSetting"></span>
 
         <label class="switch">
           <input id="autoOrganize" type="checkbox" checked />
@@ -285,11 +285,12 @@
 
       <!-- Dropdown -->
       <div class="setting">
-        <span class="setting-name">Organize new tabs</span>
+        <span class="setting-name" data-i18n="OrganizeNewTabsSetting"></span>
 
+        <!-- todo: add i18n translation to the tile metadata -->
         <select id="organizeNewTabs" class="select" title="Sort mode">
-          <option value="end">At end</option>
-          <option value="begin">At beginning</option>
+          <option value="end" data-i18n="AtEnd"></option>
+          <option value="begin" data-i18n="atBegin"></option>
         </select>
       </div>
     </div>

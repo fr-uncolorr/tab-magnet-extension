@@ -1,0 +1,26 @@
+{
+  "extensionName": {
+    "message": "Tab Magnet"
+  },
+  "extensionDescription": {
+    "message": "Uma extensão para organizar visualmente abas do mesmo endereço juntas"
+  },
+  "sortAllButton": {
+    "message": "Organizar todas"
+  },
+  "autoSettingsTitle": {
+    "message": "Configurações de automação"
+  },
+  "autoOrganizeSetting": {
+    "message": "Organizar automaticamente"
+  },
+  "OrganizeNewTabsSetting": {
+    "message": "Organizar novas abas"
+  },
+  "AtEnd": {
+    "message": "No final"
+  },
+  "AtBegin": {
+    "message": "No início"
+  }
+}

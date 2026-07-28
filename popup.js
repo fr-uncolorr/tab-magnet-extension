@@ -26,6 +26,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const { organizeMode = "end" } = await chrome.storage.sync.get("organizeMode");
   organizeTabsMode.value = organizeMode;
+
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.dataset.i18n;
+    el.textContent = chrome.i18n.getMessage(key);
+  })
 });
 
 // INTERACTIVE BUTTONS

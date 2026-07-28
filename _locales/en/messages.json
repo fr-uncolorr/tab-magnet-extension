@@ -1,0 +1,26 @@
+{
+  "extensionName": {
+    "message": "Tab Magnet"
+  },
+  "extensionDescription": {
+    "message": "An extension to visually organize tabs from the same host close together"
+  },
+  "sortAllButton": {
+    "message": "Sort all tabs"
+  },
+  "autoSettingsTitle": {
+    "message": "Automation Settings"
+  },
+  "autoOrganizeSetting": {
+    "message": "Auto organize tabs"
+  },
+  "OrganizeNewTabsSetting": {
+    "message": "Organize new tabs"
+  },    
+  "AtEnd": {
+    "message": "At end"
+  },
+  "AtBegin": {
+    "message": "At beginning"
+  }
+}
