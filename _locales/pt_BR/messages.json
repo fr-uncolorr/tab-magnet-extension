@@ -8,6 +8,9 @@
   "sortAllButton": {
     "message": "Organizar todas"
   },
+  "sortModeTooltip": {
+    "message": "Escolha onde novas abas são colocadas"
+  },
   "autoSettingsTitle": {
     "message": "Configurações de automação"
   },

@@ -8,6 +8,9 @@
   "sortAllButton": {
     "message": "Sort all tabs"
   },
+  "sortModeTooltip": {
+    "message": "Choose where new tabs are placed"
+  },
   "autoSettingsTitle": {
     "message": "Automation Settings"
   },

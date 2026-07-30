@@ -31,6 +31,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const key = el.dataset.i18n;
     el.textContent = chrome.i18n.getMessage(key);
   })
+
+  document.querySelectorAll("[data-i18n-title]").forEach(el => {
+    el.title = chrome.i18n.getMessage(el.dataset.i18nTitle);
+  })
 });
 
 // INTERACTIVE BUTTONS
