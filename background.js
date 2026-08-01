@@ -1,11 +1,25 @@
 const tabHosts = new Map();
 
+async function hydration() {
+  const allTabs = await chrome.tabs.query({});
+  for (const t of allTabs) {
+    tabHosts.set(t.id, getHostname(t));
+  }
+}
+
 // listener for when new tab created
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (!changeInfo.url) return;
 
   const host = getHostname(tab);
-  const previousHost = tabHosts.get(tabId);
+  let previousHost = tabHosts.get(tabId);
+
+  if (previousHost === undefined) {
+    await hydration();
+    previousHost = tabHosts.get(tabId);
+  }
+
+  console.log("current host is " + host + " and previous is " + previousHost);
 
   // if same host, dont move
   if (previousHost === host) {
@@ -66,9 +80,7 @@ async function findTargetIndex(tabs, tab) {
       return isTarget ? item : acc;
     });
 
-    return organizeMode === "begin" 
-    ? targetTab.index - 1
-    : targetTab.index;
+    return organizeMode === "begin" ? targetTab.index - 1 : targetTab.index;
   } else {
     return;
   }
