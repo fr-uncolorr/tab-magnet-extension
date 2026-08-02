@@ -38,7 +38,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
   const { autoOrganize = true } = await chrome.storage.sync.get("autoOrganize");
 
-  if (targetIndex && autoOrganize) {
+  if (targetIndex !== undefined && autoOrganize) {
     moveToTarget(tab, targetIndex);
   }
 });
