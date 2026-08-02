@@ -1,0 +1,29 @@
+{
+  "name": "tab-magnet-extension",
+  "version": "1.0.0",
+  "description": "readme under construction, hold on.",
+  "main": "background.js",
+  "scripts": {
+    "lint": "eslint .",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fr-uncolorr/tab-magnet-extension.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/fr-uncolorr/tab-magnet-extension/issues"
+  },
+  "homepage": "https://github.com/fr-uncolorr/tab-magnet-extension#readme",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.8.0",
+    "globals": "^17.9.0",
+    "prettier": "^3.9.6"
+  }
+}
