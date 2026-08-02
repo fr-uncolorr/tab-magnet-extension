@@ -1,8 +1,11 @@
 const tabHosts = new Map();
 
-async function hydration() {
+async function hydration(skipTabId) {
   const allTabs = await chrome.tabs.query({});
   for (const t of allTabs) {
+    // skip the tab id of the newly created tab
+    // ensure hydration only affects when worker was cold
+    if (t.id === skipTabId) continue;
     tabHosts.set(t.id, getHostname(t));
   }
 }
@@ -15,7 +18,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   let previousHost = tabHosts.get(tabId);
 
   if (previousHost === undefined) {
-    await hydration();
+    await hydration(tabId);
     previousHost = tabHosts.get(tabId);
   }
 
