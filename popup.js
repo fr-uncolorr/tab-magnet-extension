@@ -10,7 +10,9 @@ autoOrganizeCheckbox.addEventListener("change", async () => {
 });
 
 // Auto organize ALL tabs in window toggle
-const autoOrganizeFullWindowCheckbox = document.getElementById("autoOrganizeFullWindow");
+const autoOrganizeFullWindowCheckbox = document.getElementById(
+  "autoOrganizeFullWindow",
+);
 
 autoOrganizeFullWindowCheckbox.addEventListener("change", async () => {
   await chrome.storage.sync.set({
@@ -22,9 +24,9 @@ autoOrganizeFullWindowCheckbox.addEventListener("change", async () => {
 const organizeTabsMode = document.getElementById("organizeNewTabs");
 
 organizeTabsMode.addEventListener("change", async () => {
-    await chrome.storage.sync.set({
-        organizeMode: organizeTabsMode.value,
-    });
+  await chrome.storage.sync.set({
+    organizeMode: organizeTabsMode.value,
+  });
 });
 
 // LOADER
@@ -33,20 +35,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   const { autoOrganize = true } = await chrome.storage.sync.get("autoOrganize");
   autoOrganizeCheckbox.checked = autoOrganize;
 
-  const { autoOrganizeFullWindow = false } = await chrome.storage.sync.get("autoOrganizeFullWindow");
+  const { autoOrganizeFullWindow = false } = await chrome.storage.sync.get(
+    "autoOrganizeFullWindow",
+  );
   autoOrganizeFullWindowCheckbox.checked = autoOrganizeFullWindow;
 
-  const { organizeMode = "end" } = await chrome.storage.sync.get("organizeMode");
+  const { organizeMode = "end" } =
+    await chrome.storage.sync.get("organizeMode");
   organizeTabsMode.value = organizeMode;
 
-  document.querySelectorAll("[data-i18n]").forEach(el => {
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
     const key = el.dataset.i18n;
     el.textContent = chrome.i18n.getMessage(key);
-  })
+  });
 
-  document.querySelectorAll("[data-i18n-title]").forEach(el => {
+  document.querySelectorAll("[data-i18n-title]").forEach((el) => {
     el.title = chrome.i18n.getMessage(el.dataset.i18nTitle);
-  })
+  });
 });
 
 // INTERACTIVE BUTTONS

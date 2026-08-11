@@ -41,7 +41,9 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
   const { autoOrganize = true } = await chrome.storage.sync.get("autoOrganize");
 
-  const { autoOrganizeFullWindow = false } = await chrome.storage.sync.get("autoOrganizeFullWindow");
+  const { autoOrganizeFullWindow = false } = await chrome.storage.sync.get(
+    "autoOrganizeFullWindow",
+  );
 
   if (targetIndex !== undefined && autoOrganize) {
     if (autoOrganizeFullWindow) {
@@ -49,8 +51,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     } else {
       moveToTarget(tab, targetIndex);
     }
-  };
-
+  }
 });
 
 // grabs the host name from given tab
