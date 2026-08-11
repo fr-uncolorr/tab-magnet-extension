@@ -142,7 +142,7 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 });
 
 // listener for actions in the popup
-chrome.runtime.onMessage.addListener((message, _sender) => {
+chrome.runtime.onMessage.addListener((message) => {
   if (message.action === "reorder-window") {
     chrome.windows.getCurrent((window) => {
       reorderWindow(window.windowId);
