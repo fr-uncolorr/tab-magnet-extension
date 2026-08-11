@@ -17,6 +17,9 @@
   "autoOrganizeSetting": {
     "message": "Organizar automaticamente"
   },
+  "autoOrganizeFullWindowSetting": {
+    "message": "Organizar todas as abas da janela"
+  },
   "OrganizeNewTabsSetting": {
     "message": "Organizar novas abas"
   },

@@ -17,6 +17,9 @@
   "autoOrganizeSetting": {
     "message": "Auto organize tabs"
   },
+  "autoOrganizeFullWindowSetting": {
+    "message": "Organize all tabs from window"
+  },
   "OrganizeNewTabsSetting": {
     "message": "Organize new tabs"
   },    

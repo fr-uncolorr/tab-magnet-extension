@@ -9,6 +9,15 @@ autoOrganizeCheckbox.addEventListener("change", async () => {
   });
 });
 
+// Auto organize ALL tabs in window toggle
+const autoOrganizeFullWindowCheckbox = document.getElementById("autoOrganizeFullWindow");
+
+autoOrganizeFullWindowCheckbox.addEventListener("change", async () => {
+  await chrome.storage.sync.set({
+    autoOrganizeFullWindow: autoOrganizeFullWindowCheckbox.checked,
+  });
+});
+
 // Organize new tabs selector
 const organizeTabsMode = document.getElementById("organizeNewTabs");
 
@@ -23,6 +32,9 @@ organizeTabsMode.addEventListener("change", async () => {
 document.addEventListener("DOMContentLoaded", async () => {
   const { autoOrganize = true } = await chrome.storage.sync.get("autoOrganize");
   autoOrganizeCheckbox.checked = autoOrganize;
+
+  const { autoOrganizeFullWindow = false } = await chrome.storage.sync.get("autoOrganizeFullWindow");
+  autoOrganizeFullWindowCheckbox.checked = autoOrganizeFullWindow;
 
   const { organizeMode = "end" } = await chrome.storage.sync.get("organizeMode");
   organizeTabsMode.value = organizeMode;

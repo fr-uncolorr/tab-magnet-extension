@@ -41,9 +41,16 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
   const { autoOrganize = true } = await chrome.storage.sync.get("autoOrganize");
 
+  const { autoOrganizeFullWindow = false } = await chrome.storage.sync.get("autoOrganizeFullWindow");
+
   if (targetIndex !== undefined && autoOrganize) {
-    moveToTarget(tab, targetIndex);
-  }
+    if (autoOrganizeFullWindow) {
+      reorderWindow(tab.windowId);
+    } else {
+      moveToTarget(tab, targetIndex);
+    }
+  };
+
 });
 
 // grabs the host name from given tab
@@ -135,7 +142,7 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 });
 
 // listener for actions in the popup
-chrome.runtime.onMessage.addListener((message, sender) => {
+chrome.runtime.onMessage.addListener((message, _sender) => {
   if (message.action === "reorder-window") {
     chrome.windows.getCurrent((window) => {
       reorderWindow(window.windowId);
