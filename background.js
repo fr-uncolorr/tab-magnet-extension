@@ -1,57 +1,34 @@
-const tabHosts = new Map();
+let tabHosts = new Map();
+let pendingTabs = new Set();
 
-async function hydration(skipTabId) {
-  const allTabs = await chrome.tabs.query({});
-  for (const t of allTabs) {
-    // skip the tab id of the newly created tab
-    // ensure hydration only affects when worker was cold
-    if (t.id === skipTabId) continue;
-    tabHosts.set(t.id, getHostname(t));
-  }
-}
+chrome.tabs.onCreated.addListener(async (tab) => {
+  pendingTabs.add(tab.id);
+  console.log("added to pendingTabs: " + tab.id);
+});
 
-// listener for when new tab created
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-  if (!changeInfo.url) return;
-
-  const host = getHostname(tab);
-  let previousHost = tabHosts.get(tabId);
-
-  if (previousHost === undefined) {
-    await hydration(tabId);
-    previousHost = tabHosts.get(tabId);
+  if (!pendingTabs.has(tabId)) {
+    console.log("tabId " + tab.id + " NOT in pendingTabs");
+    await handleSpaNavigation(tabId, changeInfo, tab);
+    return;
+  } else {
+    console.log("tabId " + tab.id + " IS in pendingTabs");
   }
 
-  console.log("current host is " + host + " and previous is " + previousHost);
+  const url = changeInfo.url || tab.url || tab.pendingUrl;
+  if (!url) return;
 
-  // if same host, dont move
-  if (previousHost === host) {
+  const { autoOrganize = true, autoOrganizeFullWindow = false } =
+    await chrome.storage.sync.get(["autoOrganize", "autoOrganizeFullWindow"]);
+
+  if (!autoOrganize) {
+    console.log("autoOrganize disabled");
     return;
   }
 
-  // new host/first time seeing host
-  // update stored host
-  tabHosts.set(tabId, host);
+  await organizeTab(tab);
 
-  const tabs = await fetchTabs(tab.windowId);
-
-  const targetIndex = await findTargetIndex(tabs, tab);
-
-  console.log("index of last match:", targetIndex);
-
-  const { autoOrganize = true } = await chrome.storage.sync.get("autoOrganize");
-
-  const { autoOrganizeFullWindow = false } = await chrome.storage.sync.get(
-    "autoOrganizeFullWindow",
-  );
-
-  if (targetIndex !== undefined && autoOrganize) {
-    if (autoOrganizeFullWindow) {
-      reorderWindow(tab.windowId);
-    } else {
-      moveToTarget(tab, targetIndex);
-    }
-  }
+  pendingTabs.delete(tab.id);
 });
 
 // grabs the host name from given tab
@@ -76,31 +53,108 @@ async function findTargetIndex(tabs, tab) {
       candidate.id !== tab.id && getHostname(candidate) === currentHost,
   );
 
+  if (sameHost.length === 0) return;
+
   const { organizeMode = "end" } =
     await chrome.storage.sync.get("organizeMode");
 
-  if (sameHost.length > 0) {
-    // using reduce to return full tab object
-    // tab = item in the function below
-    const targetTab = sameHost.reduce((acc, item) => {
-      const isTarget =
-        organizeMode === "begin"
-          ? item.index < acc.index
-          : item.index > acc.index;
+  // "begin" references left-most tab
+  // "end" references right-most tab
+  // using reduce to return full tab object
+  // tab = item in the function below
+  const referenceTab = sameHost.reduce((acc, item) => {
+    const isReference =
+      organizeMode === "begin"
+        ? item.index < acc.index
+        : item.index > acc.index;
 
-      return isTarget ? item : acc;
-    });
+    return isReference ? item : acc;
+  });
 
-    return organizeMode === "begin" ? targetTab.index - 1 : targetTab.index;
-  } else {
-    return;
+  // chrome.tabs.move trata "index" como a posicao FINAL da aba, depois
+  // dela ja ter sido removida do array original. isso significa que,
+  // se a aba que estamos movendo (tab) estiver posicionada ANTES da
+  // referencia, a remocao dela desloca a referencia uma posicao pra
+  // tras - e precisamos compensar isso no calculo, ou erramos por 1.
+  const referenceShiftsBack = tab.index < referenceTab.index;
+  const referenceIndexAfterRemoval = referenceShiftsBack
+    ? referenceTab.index - 1
+    : referenceTab.index;
+
+  // "begin": aba deve pousar imediatamente ANTES da referencia
+  // "end":   aba deve pousar imediatamente DEPOIS da referencia
+  return organizeMode === "begin"
+    ? referenceIndexAfterRemoval
+    : referenceIndexAfterRemoval + 1;
+}
+
+// never change targetIndex value here
+// pass the correct targetIndex already
+function moveToTarget(tab, targetIndex) {
+  chrome.tabs.move(tab.id, {
+    index: targetIndex,
+  });
+}
+
+async function organizeTab(tab) {
+  const tabs = await fetchTabs(tab.windowId);
+  const targetIndex = await findTargetIndex(tabs, tab);
+
+  if (targetIndex !== undefined) {
+    moveToTarget(tab, targetIndex);
   }
 }
 
-function moveToTarget(tab, targetIndex) {
-  chrome.tabs.move(tab.id, {
-    index: targetIndex + 1,
-  });
+// trata abas quando url alterado, normalmente navegacao SPA
+// onde o host continua igual mas url muda
+//
+// nesse caso nao queremos simplesmente rodar organizeTab de novo,
+// pois aba pode já estar agrupada corretamente.
+// so queremos mover se de fato não estiver agrupada
+async function handleSpaNavigation(tabId, chanfeInfo, tab) {
+  // early return se não for mudança de url
+  if (!chanfeInfo.url) return;
+
+  const { autoOrganize = true } = await chrome.storage.sync.get("autoOrganize");
+
+  if (!autoOrganize) return;
+
+  const tabs = await fetchTabs(tab.windowId);
+
+  if (isTabGrouped(tabs, tab)) {
+    console.log("tab " + tabId + " already grouped, skipping");
+    return;
+  }
+
+  console.log("tab" + tabId + " not grouped, organizing");
+  await organizeTab(tab);
+}
+
+// verifica se aba está adjacente em pelo menos uma outra aba do mesmo host.
+// uma aba sem nenhuma outra do mesmo host na janela é considera agrupada,
+// ja que nao ha com o que agrupar.
+function isTabGrouped(tabs, tab) {
+  const currentHost = getHostname(tab);
+  const sorted = [...tabs].sort((a, b) => a.index - b.index);
+  const pos = sorted.findIndex((t) => t.id === tab.id);
+
+  // if tab not found, return
+  if (pos === -1) return true;
+
+  const hasSameHostTab = sorted.some(
+    (t) => t.id !== tab.id && getHostname(t) === currentHost,
+  );
+
+  // if its the only tab with that host, consider grouped
+  if (!hasSameHostTab) return true;
+
+  const prev = sorted[pos - 1];
+  const next = sorted[pos + 1];
+
+  return (
+    (prev && getHostname(prev) === currentHost) ||
+    (next && getHostname(next) === currentHost)
+  );
 }
 
 async function reorderWindow(windowId) {
