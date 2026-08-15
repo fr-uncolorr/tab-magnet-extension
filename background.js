@@ -100,6 +100,13 @@ async function organizeTab(tab) {
   const tabs = await fetchTabs(tab.windowId);
   const targetIndex = await findTargetIndex(tabs, tab);
 
+  const { autoOrganizeFullWindow = false } = await chrome.storage.sync.get("autoOrganizeFullWindow");
+
+  if (autoOrganizeFullWindow) {
+    console.log("organizing full window: " + tab.windowId);
+    organizeFullWindow(tab.windowId);
+  }
+
   if (targetIndex !== undefined) {
     moveToTarget(tab, targetIndex);
   }
@@ -157,7 +164,7 @@ function isTabGrouped(tabs, tab) {
   );
 }
 
-async function reorderWindow(windowId) {
+async function organizeFullWindow(windowId) {
   const tabs = await chrome.tabs.query({ windowId });
 
   const groups = new Map();
@@ -200,7 +207,7 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 chrome.runtime.onMessage.addListener((message) => {
   if (message.action === "reorder-window") {
     chrome.windows.getCurrent((window) => {
-      reorderWindow(window.windowId);
+      organizeFullWindow(window.windowId);
     });
   }
 });
