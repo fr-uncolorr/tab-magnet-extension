@@ -192,6 +192,8 @@
       /* ---------- Action Button ---------- */
 
       .action-btn {
+        height: 40px;
+        align-items: center;
         padding: 0 14px;
 
         border: none;
@@ -227,7 +229,7 @@
       <div class="actions">
         <!-- Reset -->
 
-        <button class="icon-btn" aria-label="Reset tabs">
+        <!-- <button class="icon-btn" aria-label="Reset tabs">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -243,7 +245,7 @@
             <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
             <path d="M3 3v5h5" />
           </svg>
-        </button>
+        </button> -->
 
         <button
           id="reorder-window"
@@ -255,6 +257,20 @@
 
     <div class="card">
       <div class="section-title" data-i18n="autoSettingsTitle"></div>
+
+      <!-- Dropdown -->
+      <div class="setting">
+        <span class="setting-name" data-i18n="OrganizeNewTabsSetting"></span>
+
+        <select
+          id="organizeNewTabs"
+          class="select"
+          data-i18n-title="sortModeTooltip"
+        >
+          <option value="end" data-i18n="AtEnd"></option>
+          <option value="begin" data-i18n="atBegin"></option>
+        </select>
+      </div>
 
       <!-- Auto organize toggle -->
       <div class="setting">
@@ -278,47 +294,24 @@
           <span class="slider"></span>
         </label>
       </div>
+    </div>
 
-      <!-- Dropdown -->
+    <div class="card">
+      <div class="section-title" data-i18n="organizeButtonSettingsTitle"></div>
+      <!-- Auto organize full windows organizes ALL windows toggle -->
       <div class="setting">
-        <span class="setting-name" data-i18n="OrganizeNewTabsSetting"></span>
+        <span
+          class="setting-name"
+          data-i18n="organizesAllWindowsSetting"
+        ></span>
 
-        <select
-          id="organizeNewTabs"
-          class="select"
-          data-i18n-title="sortModeTooltip"
-        >
-          <option value="end" data-i18n="AtEnd"></option>
-          <option value="begin" data-i18n="atBegin"></option>
-        </select>
+        <label class="switch">
+          <input id="organizesAllWindows" type="checkbox" />
+          <span class="slider"></span>
+        </label>
       </div>
     </div>
 
-    <!-- 
-    <div class="card">
-      <div class="section-title">Sort All Settings</div>
-
-
-      <div class="setting">
-        <span class="setting-name">Sort by</span>
-
-        <select class="select" title="Sort mode">
-          <option>Tab Count</option>
-          <option>Creation order</option>
-          <option>Alphabetically</option>
-        </select>
-      </div>
-
-      <div class="setting">
-        <span class="setting-name">Sort order</span>
-
-        <select class="select" title="Sort mode">
-          <option>Largest first</option>
-          <option>Smallest first</option>
-        </select>
-      </div>
-    </div> 
--->
   </body>
   <script src="popup.js"></script>
 </html>

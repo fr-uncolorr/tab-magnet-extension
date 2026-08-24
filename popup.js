@@ -20,6 +20,17 @@ autoOrganizeFullWindowCheckbox.addEventListener("change", async () => {
   });
 });
 
+// Organize from all windows toggle
+const organizesAllWindowsCheckbox = document.getElementById(
+  "organizesAllWindows",
+);
+
+organizesAllWindowsCheckbox.addEventListener("change", async () => {
+  await chrome.storage.sync.set({
+    organizesAllWindows: organizesAllWindowsCheckbox.checked,
+  });
+});
+
 // Organize new tabs selector
 const organizeTabsMode = document.getElementById("organizeNewTabs");
 
@@ -39,6 +50,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     "autoOrganizeFullWindow",
   );
   autoOrganizeFullWindowCheckbox.checked = autoOrganizeFullWindow;
+
+  const { organizesAllWindows = false } = await chrome.storage.sync.get(
+    "organizesAllWindows",
+  );
+  organizesAllWindowsCheckbox.checked = organizesAllWindows;
 
   const { organizeMode = "end" } =
     await chrome.storage.sync.get("organizeMode");

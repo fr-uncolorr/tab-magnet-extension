@@ -14,11 +14,17 @@
   "autoSettingsTitle": {
     "message": "Automation Settings"
   },
+  "organizeButtonSettingsTitle": {
+    "message": "Action button settings"
+  },
   "autoOrganizeSetting": {
     "message": "Auto organize tabs"
   },
   "autoOrganizeFullWindowSetting": {
     "message": "Organize all tabs from window"
+  },
+  "organizesAllWindowsSetting": {
+    "message": "Organizes tabs from all windows"
   },
   "OrganizeNewTabsSetting": {
     "message": "Organize new tabs"

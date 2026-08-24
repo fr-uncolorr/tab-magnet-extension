@@ -14,11 +14,17 @@
   "autoSettingsTitle": {
     "message": "Configurações de automação"
   },
+  "organizeButtonSettingsTitle": {
+    "message": "Configurações do botão de ação"
+  },
   "autoOrganizeSetting": {
     "message": "Organizar automaticamente"
   },
   "autoOrganizeFullWindowSetting": {
     "message": "Organizar todas as abas da janela"
+  },
+  "organizesAllWindowsSetting": {
+    "message": "Organiza abas de todas as janelas"
   },
   "OrganizeNewTabsSetting": {
     "message": "Organizar novas abas"
