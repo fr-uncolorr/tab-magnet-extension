@@ -71,9 +71,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 // INTERACTIVE BUTTONS
+
 // listen when "order all tabs" button clicked
-document.getElementById("reorder-window").addEventListener("click", () => {
+// active: true, currentWindow: true 
+// returns active tab of the window hosting the script that executed the call
+document.getElementById("reorder-window").addEventListener("click", async () => {
+  const [tab] = await chrome.tabs.query({ 
+    active: true,
+    currentWindow: true
+  });
+
   chrome.runtime.sendMessage({
     action: "reorder-window",
+    windowId: tab.windowId
   });
 });

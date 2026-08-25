@@ -18,8 +18,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   const url = changeInfo.url || tab.url || tab.pendingUrl;
   if (!url) return;
 
-  const { autoOrganize = true, autoOrganizeFullWindow = false } =
-    await chrome.storage.sync.get(["autoOrganize", "autoOrganizeFullWindow"]);
+  const { autoOrganize = true } = await chrome.storage.sync.get("autoOrganize");
 
   if (!autoOrganize) {
     console.log("autoOrganize disabled");
@@ -218,8 +217,7 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 // listener for actions in the popup
 chrome.runtime.onMessage.addListener((message) => {
   if (message.action === "reorder-window") {
-    chrome.windows.getCurrent((window) => {
-      organizeFullWindow(window.id);
-    });
+    console.log("organizing full window for id " + message.windowId);
+    organizeFullWindow(message.windowId);
   }
 });
