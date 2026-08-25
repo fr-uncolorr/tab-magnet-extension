@@ -99,7 +99,9 @@ async function organizeTab(tab) {
   const tabs = await fetchTabs(tab.windowId);
   const targetIndex = await findTargetIndex(tabs, tab);
 
-  const { autoOrganizeFullWindow = false } = await chrome.storage.sync.get("autoOrganizeFullWindow");
+  const { autoOrganizeFullWindow = false } = await chrome.storage.sync.get(
+    "autoOrganizeFullWindow",
+  );
 
   if (autoOrganizeFullWindow) {
     console.log("organizing full window: " + tab.windowId);
@@ -167,16 +169,21 @@ function isTabGrouped(tabs, tab) {
 // can pass undefined windowId and it will organize all windows
 // tabs.query: Gets all tabs that have the specified properties, or all tabs if no properties are specified.
 async function organizeFullWindow(windowId) {
-  const { organizesAllWindows = false } = await chrome.storage.sync.get("organizesAllWindows");
+  const { organizesAllWindows = false } = await chrome.storage.sync.get(
+    "organizesAllWindows",
+  );
 
   if (organizesAllWindows) {
     windowId = null;
-    console.log("organizing on all window, setting windowId to undefined. windowId: " + windowId);
+    console.log(
+      "organizing on all window, setting windowId to undefined. windowId: " +
+        windowId,
+    );
   }
-  
+
   const tabs = await chrome.tabs.query({ windowId });
 
-  console.log("fetched tabs: " + tabs.map(tab => getHostname(tab)));
+  console.log("fetched tabs: " + tabs.map((tab) => getHostname(tab)));
 
   const groups = new Map();
 
